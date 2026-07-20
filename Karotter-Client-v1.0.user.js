@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Karotter Client v1.0
-// @namespace    https://github.com/
+// @namespace    https://github.com/Sovereign-maxasas
 // @version      1.0.0
 // @description  Keyboard shortcuts for Karotter
 // @author       Sc
