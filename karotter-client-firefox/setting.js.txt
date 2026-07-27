@@ -1,0 +1,206 @@
+const defaults = {
+    showShortcuts: true,
+    postHighlight: true,
+    actionNotifications: true,
+
+    markdownToolbar: true,
+    latexToolbar: true,
+    latexPreview: true,
+
+    showLevel: true,
+    level: 1,
+    xp: 0,
+
+    panelPosition: "bottom-right",
+    panelOpacity: 0.75,
+
+    shortcuts: {
+        like: "E",
+        repost: "R",
+        quote: "W",
+        reply: "S",
+        karotter: "N",
+        refresh: "D"
+    }
+};
+
+
+const form = document.getElementById("settings-form");
+const status = document.getElementById("save-status");
+const opacity = document.querySelector('input[name="panelOpacity"]');
+const opacityOutput = document.getElementById("opacity-output");
+
+const shortcutList = document.getElementById("shortcut-list");
+
+
+const shortcutNames = {
+    like: "いいね",
+    repost: "リカロート",
+    quote: "引用RK",
+    reply: "リプライ",
+    karotter: "カロート",
+    refresh: "TL更新"
+};
+
+
+
+function saveSettings() {
+
+    const data = {};
+
+    const inputs = form.querySelectorAll("input, select");
+
+    inputs.forEach(input => {
+
+        if (input.type === "checkbox") {
+            data[input.name] = input.checked;
+        }
+
+        else if (input.type === "number") {
+            data[input.name] = Number(input.value);
+        }
+
+        else if (input.type === "range") {
+            data[input.name] = Number(input.value);
+        }
+
+        else {
+            data[input.name] = input.value;
+        }
+
+    });
+
+
+    data.shortcuts = {};
+
+    document.querySelectorAll(".shortcut-input")
+        .forEach(input => {
+
+            data.shortcuts[input.dataset.key] =
+                input.value;
+
+        });
+
+
+    browser.storage.local.set(data);
+
+
+    status.textContent = "保存しました";
+
+    setTimeout(() => {
+        status.textContent = "";
+    }, 1500);
+
+}
+
+
+
+function loadSettings() {
+
+    browser.storage.local.get(defaults)
+        .then(settings => {
+
+
+            Object.keys(settings)
+                .forEach(key => {
+
+                    const input =
+                        form.elements[key];
+
+
+                    if (!input) return;
+
+
+                    if (input.type === "checkbox") {
+                        input.checked = settings[key];
+                    }
+
+                    else {
+                        input.value = settings[key];
+                    }
+
+                });
+
+
+            opacityOutput.textContent =
+                settings.panelOpacity;
+
+
+            createShortcutInputs(settings.shortcuts);
+
+        });
+
+}
+
+
+
+function createShortcutInputs(shortcuts) {
+
+    shortcutList.innerHTML = "";
+
+
+    Object.entries(shortcuts)
+        .forEach(([key,value]) => {
+
+
+            const div = document.createElement("div");
+
+
+            div.innerHTML = `
+<label>
+${shortcutNames[key]}
+<input
+class="shortcut-input"
+data-key="${key}"
+value="${value}"
+readonly>
+</label>
+`;
+
+
+            const input =
+                div.querySelector("input");
+
+
+            input.addEventListener(
+                "keydown",
+                e => {
+
+                    e.preventDefault();
+
+                    input.value =
+                        e.key.toUpperCase();
+
+                    saveSettings();
+
+                }
+            );
+
+
+            shortcutList.appendChild(div);
+
+        });
+
+}
+
+
+
+form.addEventListener(
+    "change",
+    saveSettings
+);
+
+
+opacity.addEventListener(
+    "input",
+    () => {
+
+        opacityOutput.textContent =
+            opacity.value;
+
+    }
+);
+
+
+
+loadSettings();

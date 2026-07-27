@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Karotter Client Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="settings-layout">
+
+    <!-- 左サイドバー -->
+    <aside class="settings-sidebar">
+      <div class="sidebar-header">
+        <p class="eyebrow">Karotter Client</p>
+        <h1>設定</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="tab-btn is-active" data-tab="stats">統計</button>
+        <button class="tab-btn" data-tab="ui">UI</button>
+        <button class="tab-btn" data-tab="shortcuts">ショートカット</button>
+        <button class="tab-btn" data-tab="post">投稿</button>
+        <button class="tab-btn" data-tab="about">About</button>
+      </nav>
+    </aside>
+
+    <!-- メインコンテンツ -->
+    <main class="settings-main">
+      <p id="save-status" role="status" aria-live="polite"></p>
+
+      <!-- 統計タブ -->
+      <div class="tab-panel is-active" data-panel="stats">
+        <h2 class="panel-title">統計</h2>
+        <section>
+          <h3>アクション統計</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-icon">♥</span>
+              <span class="stat-label">いいね</span>
+              <strong class="stat-value" id="stat-like">--</strong>
+              <span class="stat-unit">回</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">RT</span>
+              <span class="stat-label">リカロート</span>
+              <strong class="stat-value" id="stat-rekarot">--</strong>
+              <span class="stat-unit">回</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">RK</span>
+              <span class="stat-label">引用RK</span>
+              <strong class="stat-value" id="stat-quote">--</strong>
+              <span class="stat-unit">回</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-icon">POST</span>
+              <span class="stat-label">今日の投稿</span>
+              <strong class="stat-value" id="stat-post-count">--</strong>
+              <span class="stat-unit">回</span>
+            </div>
+          </div>
+          <button type="button" id="stats-reset" class="stats-reset-btn">統計をリセット</button>
+        </section>
+        <section>
+          <h3>投稿時間帯（今日）</h3>
+          <p class="hint">今日の時間帯ごとの投稿数です。日付が変わると自動でリセットされます。</p>
+          <div class="hourly-chart" id="hourly-today-chart" aria-label="今日の投稿時間帯グラフ"></div>
+          <div class="hourly-labels" id="hourly-today-labels"></div>
+        </section>
+        <section>
+          <h3>投稿時間帯（累計）</h3>
+          <p class="hint">時間帯ごとの投稿数です。累計で記録されます。</p>
+          <div class="hourly-chart" id="hourly-chart" aria-label="投稿時間帯グラフ"></div>
+          <div class="hourly-labels" id="hourly-labels"></div>
+          <button type="button" id="hourly-reset" class="stats-reset-btn" style="margin-top:10px;">時間帯データをリセット</button>
+        </section>
+      </div>
+
+      <!-- UIタブ -->
+      <div class="tab-panel" data-panel="ui">
+        <h2 class="panel-title">UI</h2>
+        <form id="settings-form">
+          <section>
+            <h3>時計</h3>
+            <label><input type="checkbox" name="showClock"> 時計を表示する</label>
+            <label><input type="checkbox" name="clockShowSeconds"> 秒を表示する</label>
+          </section>
+          <section>
+            <h3>表示</h3>
+            <label><input type="checkbox" name="showShortcuts"> ショートカットパネルを表示</label>
+            <label><input type="checkbox" name="postHighlight"> 選択中の投稿をハイライト</label>
+            <label><input type="checkbox" name="actionNotifications"> 操作通知を表示</label>
+            <label><input type="checkbox" name="showLevel"> レベル・XPをパネルに表示</label>
+            <p class="hint" style="margin-top:4px;">XPはプロフィール画面から自動取得されます。</p>
+          </section>
+          <section>
+            <h3>パネル</h3>
+            <label>透明度 <input type="range" name="panelOpacity" min="0.5" max="1" step="0.05"><output id="opacity-output"></output></label>
+          </section>
+          <section>
+            <h3>フォント</h3>
+            <label><input type="radio" name="font" value="default"> 標準（デフォルト）</label>
+            <label><input type="radio" name="font" value="meiryo"> メイリオ</label>
+          </section>
+        </form>
+      </div>
+
+      <!-- ショートカットタブ -->
+      <div class="tab-panel" data-panel="shortcuts">
+        <h2 class="panel-title">ショートカット</h2>
+        <form id="shortcut-form">
+          <section>
+            <h3>キー割り当て</h3>
+            <p class="hint">入力欄をクリックしてから、割り当てたいキーを押してください。</p>
+            <div id="shortcut-list" class="shortcut-list"></div>
+          </section>
+        </form>
+      </div>
+
+      <!-- 投稿タブ -->
+      <div class="tab-panel" data-panel="post">
+        <h2 class="panel-title">投稿</h2>
+        <form id="post-form">
+          <section>
+            <h3>入力支援</h3>
+            <label><input type="checkbox" name="markdownToolbar"> Markdownツールバー</label>
+            <label><input type="checkbox" name="latexToolbar"> LaTeXツールバー</label>
+            <label><input type="checkbox" name="latexPreview"> 数式プレビュー</label>
+            <label><input type="checkbox" name="markdownPreview"> Markdownプレビュー</label>
+          </section>
+          <section id="age-restriction-section">
+            <h3>年齢制限の自動設定 <button type="button" id="default-keywords-toggle" class="toggle-link">初期設定を見る</button></h3>
+            <div id="default-keywords-panel" hidden>
+              <p class="hint">以下がデフォルトのキーワードです。「追加」で自分のリストに追加できます。</p>
+              <div id="default-keywords-list" class="keyword-list default-keyword-list"></div>
+            </div>
+            <p class="hint">投稿内容に下記キーワードが含まれていると、年齢制限を自動でONにします。</p>
+            <label><input type="checkbox" name="ageRestrictionEnabled"> 年齢制限の自動設定を有効にする</label>
+            <div class="keyword-editor">
+              <div id="keyword-list" class="keyword-list"></div>
+              <div class="keyword-input-row">
+                <input type="text" id="keyword-input" placeholder="キーワードを追加..." maxlength="50">
+                <button type="button" id="keyword-add-btn" class="keyword-add-btn">追加</button>
+              </div>
+            </div>
+          </section>
+          <section id="template-section">
+            <h3>投稿テンプレート</h3>
+            <p class="hint">投稿欄に「テンプレ」ボタンが表示され、クリックで選択・挿入できます。</p>
+            <div id="template-list" class="template-list"></div>
+            <div class="template-input-row">
+              <input type="text" id="template-name-input" placeholder="テンプレート名..." maxlength="30">
+              <textarea id="template-body-input" placeholder="テンプレート本文..." rows="3" maxlength="500"></textarea>
+              <button type="button" id="template-add-btn" class="keyword-add-btn">追加</button>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      <!-- Aboutタブ -->
+      <div class="tab-panel" data-panel="about">
+        <h2 class="panel-title">About</h2>
+        <section>
+          <div class="about-header">
+            <img src="../icons/icon96.png" alt="Karotter Client" class="about-icon">
+            <div>
+              <h3>Karotter Client</h3>
+              <p>バージョン 1.1.0</p>
+            </div>
+          </div>
+          <p>Karotterをもっと便利に。キーボードショートカット、投稿テンプレート、画像保存、統計表示など。</p>
+          <p>Created by <a href="https://karotter.com/profile/Sc" target="_blank" rel="noopener">@Sc</a></p>
+        </section>
+      </div>
+
+    </main>
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html>
